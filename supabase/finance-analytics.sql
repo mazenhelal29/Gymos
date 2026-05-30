@@ -1,4 +1,6 @@
 -- تحليلات المالية لصاحب الصالة — نفّذ في Supabase SQL Editor
+-- يتطلب جدول expenses (نفّذ expenses.sql أولاً إن لم يكن موجوداً)
+
 CREATE OR REPLACE FUNCTION public.get_gym_finance_analytics(p_months integer DEFAULT 6)
 RETURNS json
 LANGUAGE plpgsql
@@ -12,6 +14,10 @@ DECLARE
   last_month_start timestamptz;
   last_month_end timestamptz;
   result json;
+  rev_total numeric;
+  rev_monthly numeric;
+  exp_total numeric;
+  exp_monthly numeric;
 BEGIN
   gid := get_user_gym_id();
 
@@ -23,6 +29,10 @@ BEGIN
       'monthly_growth_pct', 0,
       'transaction_count', 0,
       'avg_transaction', 0,
+      'total_expenses', 0,
+      'monthly_expenses', 0,
+      'net_profit', 0,
+      'monthly_net_profit', 0,
       'by_method', '[]'::json,
       'monthly_series', '[]'::json
     );
@@ -94,7 +104,17 @@ BEGIN
   INTO result
   FROM (SELECT amount::numeric AS amt, paid_at FROM payments WHERE gym_id = gid) b;
 
-  RETURN result;
+  SELECT COALESCE(SUM(amount::numeric), 0) INTO rev_total FROM payments WHERE gym_id = gid;
+  SELECT COALESCE(SUM(amount::numeric) FILTER (WHERE paid_at >= month_start), 0) INTO rev_monthly FROM payments WHERE gym_id = gid;
+  SELECT COALESCE(SUM(amount::numeric), 0) INTO exp_total FROM expenses WHERE gym_id = gid;
+  SELECT COALESCE(SUM(amount::numeric) FILTER (WHERE spent_at >= month_start), 0) INTO exp_monthly FROM expenses WHERE gym_id = gid;
+
+  RETURN (result::jsonb || jsonb_build_object(
+    'total_expenses', ROUND(exp_total, 2),
+    'monthly_expenses', ROUND(exp_monthly, 2),
+    'net_profit', ROUND(rev_total - exp_total, 2),
+    'monthly_net_profit', ROUND(rev_monthly - exp_monthly, 2)
+  ))::json;
 END;
 $$;
 

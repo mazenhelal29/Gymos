@@ -15,7 +15,10 @@ import {
   TrendingDown,
   Receipt,
   BarChart3,
+  ArrowDownCircle,
+  Scale,
 } from 'lucide-react';
+import { Link } from 'wouter';
 import {
   Dialog,
   DialogContent,
@@ -146,7 +149,7 @@ export function Payments() {
         <div>
           <h1 className="page-title">المالية</h1>
           <p className="text-[hsl(var(--muted-foreground))]">
-            إجمالي الأرباح، التحليلات، وسجل المدفوعات لصالتك.
+            إجمالي الأرباح، المصروفات، صافي الربح، وسجل المدفوعات.
           </p>
         </div>
         <Button className="w-full sm:w-auto btn-brand" onClick={handleAddClick}>
@@ -155,27 +158,67 @@ export function Payments() {
       </div>
 
       {/* بطاقات الملخص */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="gradient-brand text-white border-0 shadow-lg shadow-red-500/20 lg:col-span-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <Card className="gradient-brand text-white border-0 shadow-lg shadow-red-500/20 sm:col-span-2 lg:col-span-2">
           <CardHeader className="pb-2">
             <CardDescription className="text-red-100">إجمالي الأرباح (كل الفترات)</CardDescription>
-            <CardTitle className="text-2xl sm:text-4xl font-bold">
+            <CardTitle className="text-2xl sm:text-3xl font-bold">
               {analyticsLoading ? '...' : formatCurrency(analytics?.total_revenue ?? 0)}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-red-100/90">
-              {analytics?.transaction_count ?? 0} معاملة مسجّلة في النظام
+              {analytics?.transaction_count ?? 0} معاملة مسجّلة
             </p>
           </CardContent>
         </Card>
 
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="space-y-1 min-w-0">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">إجمالي المصروفات</p>
+                <p className="text-xl sm:text-2xl font-bold text-amber-600">
+                  {analyticsLoading ? '...' : formatCurrency(analytics?.total_expenses ?? 0)}
+                </p>
+                <Link href="/expenses" className="text-xs text-amber-600 hover:underline">
+                  إدارة المصروفات ←
+                </Link>
+              </div>
+              <div className="p-3 rounded-xl bg-amber-500/15 shrink-0">
+                <ArrowDownCircle className="h-6 w-6 text-amber-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-emerald-500/30 bg-emerald-500/5 sm:col-span-2 lg:col-span-1 xl:col-span-2">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="space-y-1 min-w-0">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">صافي الربح</p>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">الأرباح − المصروفات</p>
+                <p
+                  className={`text-xl sm:text-2xl font-bold ${
+                    (analytics?.net_profit ?? 0) >= 0 ? 'text-emerald-600' : 'text-rose-500'
+                  }`}
+                >
+                  {analyticsLoading ? '...' : formatCurrency(analytics?.net_profit ?? 0)}
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-500/15 shrink-0">
+                <Scale className="h-6 w-6 text-emerald-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm text-[hsl(var(--muted-foreground))]">أرباح الشهر الحالي</p>
-                <p className="text-2xl font-bold">
+                <p className="text-xl sm:text-2xl font-bold">
                   {analyticsLoading ? '...' : formatCurrency(analytics?.monthly_revenue ?? 0)}
                 </p>
                 <div
@@ -187,7 +230,7 @@ export function Payments() {
                   <span>{growthUp ? '+' : ''}{growth}% عن الشهر الماضي</span>
                 </div>
               </div>
-              <div className="p-3 rounded-xl bg-red-500/10">
+              <div className="p-3 rounded-xl bg-red-500/10 shrink-0">
                 <DollarSign className="h-6 w-6 text-red-500" />
               </div>
             </div>
@@ -195,16 +238,15 @@ export function Payments() {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm text-[hsl(var(--muted-foreground))]">متوسط قيمة الدفعة</p>
-                <p className="text-2xl font-bold">
+                <p className="text-xl sm:text-2xl font-bold">
                   {analyticsLoading ? '...' : formatCurrency(analytics?.avg_transaction ?? 0)}
                 </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">يساعدك في تسعير الباقات</p>
               </div>
-              <div className="p-3 rounded-xl bg-blue-500/10">
+              <div className="p-3 rounded-xl bg-blue-500/10 shrink-0">
                 <Receipt className="h-6 w-6 text-blue-500" />
               </div>
             </div>

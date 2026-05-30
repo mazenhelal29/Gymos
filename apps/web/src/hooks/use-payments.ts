@@ -71,7 +71,16 @@ export function useFinanceAnalytics(months = 6) {
       });
 
       if (!rpcError && rpcData) {
-        return rpcData as FinanceAnalytics;
+        const raw = rpcData as FinanceAnalytics;
+        return {
+          ...raw,
+          total_expenses: Number(raw.total_expenses ?? 0),
+          monthly_expenses: Number(raw.monthly_expenses ?? 0),
+          net_profit: Number(raw.net_profit ?? raw.total_revenue - (raw.total_expenses ?? 0)),
+          monthly_net_profit: Number(
+            raw.monthly_net_profit ?? raw.monthly_revenue - (raw.monthly_expenses ?? 0)
+          ),
+        };
       }
 
       const { data: payments, error } = await supabase
@@ -81,7 +90,18 @@ export function useFinanceAnalytics(months = 6) {
         .order('paid_at', { ascending: false });
 
       if (error) throw error;
-      return computeFinanceAnalytics(payments ?? [], months);
+
+      let expenses: { amount: string | number; spent_at: string }[] = [];
+      const { data: expData, error: expError } = await supabase
+        .from('expenses')
+        .select('amount, spent_at')
+        .eq('gym_id', gymId);
+
+      if (!expError && expData) {
+        expenses = expData;
+      }
+
+      return computeFinanceAnalytics(payments ?? [], months, expenses);
     },
     enabled: canLoadGymData(user?.gymId),
   });

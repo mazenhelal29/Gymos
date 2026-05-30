@@ -52,6 +52,24 @@ export interface Payment {
   paid_at: string;
 }
 
+export type ExpenseCategory =
+  | 'trainer_salary'
+  | 'rent'
+  | 'utilities'
+  | 'equipment'
+  | 'other';
+
+export interface Expense {
+  id: string;
+  gym_id: string;
+  category: ExpenseCategory;
+  title: string;
+  amount: number;
+  description: string | null;
+  spent_at: string;
+  created_at: string;
+}
+
 // ─── SaaS Subscriptions (Super Admin) ─────────────────────────────────────────
 
 export type SaasPlanType = '1_month' | '3_months' | '6_months' | 'yearly' | 'lifetime';
@@ -92,5 +110,7 @@ export type InsertMember = Omit<Member, 'id' | 'created_at'>;
 export type InsertSubscription = Omit<Subscription, 'id' | 'created_at'>;
 
 export type InsertPayment = Omit<Payment, 'id'>;
+
+export type InsertExpense = Omit<Expense, 'id' | 'created_at'>;
 
 export type InsertGymSubscription = Omit<GymSubscription, 'id' | 'created_at' | 'paid_at'>;

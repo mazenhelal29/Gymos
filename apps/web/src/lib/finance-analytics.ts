@@ -17,6 +17,10 @@ export interface FinanceAnalytics {
   monthly_growth_pct: number;
   transaction_count: number;
   avg_transaction: number;
+  total_expenses: number;
+  monthly_expenses: number;
+  net_profit: number;
+  monthly_net_profit: number;
   by_method: PaymentMethodBreakdown[];
   monthly_series: MonthlyFinancePoint[];
 }
@@ -32,9 +36,12 @@ export function formatMonthLabel(monthKey: string): string {
   return `${AR_MONTHS[month - 1] ?? month} ${year}`;
 }
 
+type ExpenseRow = { amount: string | number; spent_at: string };
+
 export function computeFinanceAnalytics(
   payments: { amount: string | number; payment_method: string; paid_at: string }[],
-  months = 6
+  months = 6,
+  expenses: ExpenseRow[] = []
 ): FinanceAnalytics {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -59,6 +66,16 @@ export function computeFinanceAnalytics(
     m.total += amt;
     m.count += 1;
     methodMap.set(p.payment_method, m);
+  }
+
+  let totalExpenses = 0;
+  let monthlyExpenses = 0;
+
+  for (const e of expenses) {
+    const amt = Number(e.amount) || 0;
+    const spentAt = new Date(e.spent_at);
+    totalExpenses += amt;
+    if (spentAt >= monthStart) monthlyExpenses += amt;
   }
 
   const monthlyGrowthPct =
@@ -94,6 +111,9 @@ export function computeFinanceAnalytics(
   const transactionCount = payments.length;
   const avgTransaction = transactionCount > 0 ? totalRevenue / transactionCount : 0;
 
+  const netProfit = totalRevenue - totalExpenses;
+  const monthlyNetProfit = monthlyRevenue - monthlyExpenses;
+
   return {
     total_revenue: totalRevenue,
     monthly_revenue: monthlyRevenue,
@@ -101,6 +121,10 @@ export function computeFinanceAnalytics(
     monthly_growth_pct: monthlyGrowthPct,
     transaction_count: transactionCount,
     avg_transaction: Math.round(avgTransaction * 100) / 100,
+    total_expenses: totalExpenses,
+    monthly_expenses: monthlyExpenses,
+    net_profit: Math.round(netProfit * 100) / 100,
+    monthly_net_profit: Math.round(monthlyNetProfit * 100) / 100,
     by_method,
     monthly_series: monthlySeries,
   };

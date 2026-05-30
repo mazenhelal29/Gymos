@@ -15,6 +15,7 @@ import {
   Sun,
   Moon,
   Shield,
+  Wallet,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
@@ -25,6 +26,7 @@ const navItems = [
   { label: 'الأعضاء', icon: Users, href: '/members' },
   { label: 'الاشتراكات', icon: CalendarCheck, href: '/subscriptions' },
   { label: 'المالية', icon: CreditCard, href: '/payments' },
+  { label: 'المصروفات', icon: Wallet, href: '/expenses' },
   { label: 'الإعدادات', icon: Settings, href: '/settings' },
 ];
 

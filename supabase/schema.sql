@@ -78,6 +78,23 @@ CREATE TABLE payments (
   paid_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
+-- بعد payments — المصروفات (أو نفّذ expenses.sql على مشروع موجود)
+CREATE TYPE expense_category AS ENUM ('trainer_salary', 'rent', 'utilities', 'equipment', 'other');
+
+CREATE TABLE expenses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  gym_id UUID NOT NULL REFERENCES gyms(id) ON DELETE CASCADE,
+  category expense_category NOT NULL,
+  title TEXT NOT NULL,
+  amount NUMERIC(10,2) NOT NULL CHECK (amount >= 0),
+  description TEXT,
+  spent_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_expenses_gym_id ON expenses(gym_id);
+CREATE INDEX idx_expenses_spent_at ON expenses(spent_at);
+
 -- ─── SaaS Settings ──────────────────────────────────────────
 CREATE TABLE saas_settings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -156,6 +173,7 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE saas_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE gym_subscriptions ENABLE ROW LEVEL SECURITY;
 
@@ -238,6 +256,23 @@ CREATE POLICY "Users can update their gym payments"
 
 CREATE POLICY "Users can delete their gym payments"
   ON payments FOR DELETE
+  USING (gym_id = get_user_gym_id());
+
+-- ─── Expenses Policies ─────────────────────────────────────
+CREATE POLICY "Users can view their gym expenses"
+  ON expenses FOR SELECT
+  USING (gym_id = get_user_gym_id());
+
+CREATE POLICY "Users can insert expenses to their gym"
+  ON expenses FOR INSERT
+  WITH CHECK (gym_id = get_user_gym_id());
+
+CREATE POLICY "Users can update their gym expenses"
+  ON expenses FOR UPDATE
+  USING (gym_id = get_user_gym_id());
+
+CREATE POLICY "Users can delete their gym expenses"
+  ON expenses FOR DELETE
   USING (gym_id = get_user_gym_id());
 
 -- ─── SaaS Settings Policies ────────────────────────────────

@@ -16,6 +16,7 @@ const DB_TABLES = [
   'members',
   'subscriptions',
   'payments',
+  'expenses',
   'gym_subscriptions',
   'saas_settings',
   'super_admins',
@@ -298,6 +299,39 @@ const getInitialDb = (): MockDb => {
     }
   }
 
+  const expenses = [
+    {
+      id: 'exp-1',
+      gym_id: DEFAULT_GYM_ID,
+      category: 'rent',
+      title: 'إيجار الصالة',
+      amount: '4500',
+      description: 'إيجار شهري',
+      spent_at: subMonths(now, 1).toISOString(),
+      created_at: subMonths(now, 1).toISOString(),
+    },
+    {
+      id: 'exp-2',
+      gym_id: DEFAULT_GYM_ID,
+      category: 'trainer_salary',
+      title: 'مرتبات المدربين',
+      amount: '2800',
+      description: null,
+      spent_at: now.toISOString(),
+      created_at: now.toISOString(),
+    },
+    {
+      id: 'exp-3',
+      gym_id: DEFAULT_GYM_ID,
+      category: 'utilities',
+      title: 'فاتورة كهرباء',
+      amount: '650',
+      description: null,
+      spent_at: now.toISOString(),
+      created_at: now.toISOString(),
+    },
+  ];
+
   const gymSubscription = {
     id: 'saas-sub-default',
     gym_id: DEFAULT_GYM_ID,
@@ -330,6 +364,7 @@ const getInitialDb = (): MockDb => {
     members,
     subscriptions,
     payments,
+    expenses,
     gym_subscriptions: [gymSubscription],
     saas_settings,
     super_admins: [{ user_id: DEFAULT_USER_ID, email: 'jane@gymos.com', created_at: now.toISOString() }],

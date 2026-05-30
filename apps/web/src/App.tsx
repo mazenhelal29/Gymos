@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Members } from './pages/Members';
 import { Subscriptions } from './pages/Subscriptions';
 import { Payments } from './pages/Payments';
+import { Expenses } from './pages/Expenses';
 import { Settings } from './pages/Settings';
 import { Expired } from './pages/Expired';
 import { AdminLayout } from './components/layout/admin-layout';
@@ -129,6 +130,9 @@ export function App() {
       </Route>
       <Route path="/payments">
         <ProtectedPage component={Payments} />
+      </Route>
+      <Route path="/expenses">
+        <ProtectedPage component={Expenses} />
       </Route>
       <Route path="/settings">
         <ProtectedPage component={Settings} />
