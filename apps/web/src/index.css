@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/* ─── CSS Custom Properties (Design Tokens) ─────────────── */
+:root {
+  --font-sans: "Cairo", "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Brand — أحمر طاقة + أزرق ثقة (مناسب للصالات) */
+  --brand: 0 72% 51%;
+  --brand-secondary: 217 91% 55%;
+  --brand-foreground: 0 0% 100%;
+
+  /* Light Mode */
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 0 72% 51%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 20% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 217 40% 94%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 214 20% 90%;
+  --input: 214 20% 90%;
+  --ring: 0 72% 51%;
+  --radius: 0.75rem;
+  --chart-1: 0 72% 51%;
+  --chart-2: 217 91% 55%;
+  --chart-3: 199 89% 48%;
+  --chart-4: 142 71% 45%;
+  --chart-5: 38 92% 50%;
+  --sidebar: 222 47% 11%;
+  --sidebar-foreground: 210 20% 96%;
+  --sidebar-border: 217 30% 22%;
+}
+
+.dark {
+  --background: 222 47% 7%;
+  --foreground: 210 20% 98%;
+  --card: 222 40% 10%;
+  --card-foreground: 210 20% 98%;
+  --popover: 222 40% 10%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 0 72% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217 35% 18%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 217 30% 16%;
+  --muted-foreground: 215 16% 65%;
+  --accent: 217 35% 18%;
+  --accent-foreground: 210 20% 98%;
+  --destructive: 0 62% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 217 30% 20%;
+  --input: 217 30% 20%;
+  --ring: 0 72% 55%;
+  --chart-1: 0 72% 55%;
+  --chart-2: 217 91% 60%;
+  --chart-3: 199 89% 52%;
+  --chart-4: 142 65% 50%;
+  --chart-5: 38 90% 55%;
+  --sidebar: 222 47% 6%;
+  --sidebar-foreground: 210 20% 96%;
+  --sidebar-border: 217 30% 18%;
+}
+
+/* ─── Base Styles ────────────────────────────────────────── */
+* {
+  @apply border-[hsl(var(--border))];
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  min-height: 100dvh;
+}
+
+html {
+  overflow-x: clip;
+}
+
+/* Safe area for notched phones */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Responsive table scroll */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll table {
+  min-width: 36rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 640px) {
+  .page-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+/* ─── Glass Effect ───────────────────────────────────────── */
+.glass {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* ─── Gym brand utilities (أحمر + أزرق) ─────────────────── */
+.btn-brand {
+  background: linear-gradient(to left, hsl(var(--brand)), hsl(var(--brand-secondary)));
+  color: hsl(var(--brand-foreground));
+  border: none;
+  box-shadow: 0 4px 14px hsl(var(--brand) / 0.35);
+}
+.btn-brand:hover {
+  filter: brightness(1.08);
+}
+.gradient-brand {
+  background: linear-gradient(135deg, hsl(var(--brand)), hsl(var(--brand-secondary)));
+}
+.text-gradient-brand {
+  background: linear-gradient(to left, hsl(0 72% 60%), hsl(217 91% 65%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ring-brand {
+  --tw-ring-color: hsl(var(--brand) / 0.35);
+}

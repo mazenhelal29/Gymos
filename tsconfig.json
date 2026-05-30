@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./lib/schema"
+    },
+    {
+      "path": "./lib/types"
+    },
+    {
+      "path": "./lib/utils"
+    }
+  ]
+}
