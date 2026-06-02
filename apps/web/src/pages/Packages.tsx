@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { formatCurrency } from '@gymos/utils';
-import { Plus, MoreVertical, Edit, Trash } from 'lucide-react';
+import { Plus, MoreVertical, Edit, Trash, Clock, Tag } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,78 +108,73 @@ export function Packages() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <div className="table-scroll">
-            <table className="w-full text-sm text-left text-right">
-              <thead className="text-xs text-[hsl(var(--muted-foreground))] uppercase bg-[hsl(var(--muted))] border-b border-[hsl(var(--border))]">
-                <tr>
-                  <th className="px-3 sm:px-6 py-4 font-medium text-right">اسم الباقة</th>
-                  <th className="px-3 sm:px-6 py-4 font-medium text-right">المدة (بالأيام)</th>
-                  <th className="px-3 sm:px-6 py-4 font-medium text-right">السعر</th>
-                  <th className="px-3 sm:px-6 py-4 font-medium text-left">الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[hsl(var(--border))]">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={4} className="px-3 sm:px-6 py-8 text-center text-[hsl(var(--muted-foreground))]">
-                      جاري التحميل...
-                    </td>
-                  </tr>
-                ) : packages.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-3 sm:px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                      لا توجد باقات مضافة. أضف باقة جديدة للبدء.
-                    </td>
-                  </tr>
-                ) : (
-                  packages.map((pkg: any) => (
-                    <tr key={pkg.id} className="hover:bg-[hsl(var(--accent))/50] transition-colors">
-                      <td className="px-3 sm:px-6 py-4 text-right">
-                        <p className="font-medium text-[hsl(var(--foreground))]">{pkg.name}</p>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 text-right">
-                        <p className="text-[hsl(var(--muted-foreground))]">{pkg.duration_days} يوماً</p>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 text-right">
-                        <p className="font-medium text-amber-500">{formatCurrency(pkg.price)}</p>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 text-left">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-40 z-50 bg-[hsl(var(--popover))] border border-[hsl(var(--border))] rounded-md shadow-md p-1">
-                            <DropdownMenuItem 
-                              className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer hover:bg-[hsl(var(--accent))] rounded-sm w-full text-right justify-start"
-                              onClick={() => handleEditClick(pkg)}
-                            >
-                              <Edit className="h-4 w-4 ml-1" /> تعديل
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer text-rose-500 hover:bg-rose-500/10 rounded-sm w-full text-right justify-start"
-                              onClick={() => {
-                                if (confirm('هل أنت متأكد من رغبتك في حذف هذه الباقة؟')) {
-                                  deletePkg(pkg.id);
-                                }
-                              }}
-                            >
-                              <Trash className="h-4 w-4 ml-1" /> حذف
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-[hsl(var(--muted-foreground))]">جاري التحميل...</p>
+        </div>
+      ) : packages.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[hsl(var(--border))] rounded-xl bg-[hsl(var(--accent))/30]">
+          <Tag className="h-12 w-12 text-[hsl(var(--muted-foreground))] mb-4 opacity-20" />
+          <h3 className="text-lg font-medium text-[hsl(var(--foreground))]">لا توجد باقات مضافة</h3>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1 mb-4">أضف باقة جديدة للبدء في تسجيل المشتركين.</p>
+          <Button className="btn-brand" onClick={handleAddClick}>
+            <Plus className="ml-2 h-4 w-4" /> أضف باقتك الأولى
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {packages.map((pkg: any) => (
+            <Card key={pkg.id} className="relative overflow-hidden group hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-red-500/10 bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--accent))/10]">
+              <div className="absolute top-0 right-0 w-1.5 h-full bg-gradient-to-b from-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+              <CardContent className="p-5 flex flex-col gap-5">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="flex-1 min-w-0 pt-1">
+                    <h3 className="font-bold text-lg text-[hsl(var(--foreground))] truncate" title={pkg.name}>{pkg.name}</h3>
+                    <div className="flex items-center gap-1.5 mt-2 text-sm font-medium text-[hsl(var(--muted-foreground))] bg-[hsl(var(--accent))] w-fit px-2.5 py-1 rounded-md border border-[hsl(var(--border))]">
+                      <Clock className="h-4 w-4 text-red-400" />
+                      <span>{pkg.duration_days} يوماً</span>
+                    </div>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent))] rounded-full shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-36 z-50 bg-[hsl(var(--popover))] border border-[hsl(var(--border))] rounded-md shadow-md p-1">
+                      <DropdownMenuItem 
+                        className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer hover:bg-[hsl(var(--accent))] rounded-sm w-full text-right justify-start"
+                        onClick={() => handleEditClick(pkg)}
+                      >
+                        <Edit className="h-4 w-4 ml-1" /> تعديل
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="flex items-center gap-2 px-2 py-1.5 text-sm cursor-pointer text-rose-500 hover:bg-rose-500/10 rounded-sm w-full text-right justify-start"
+                        onClick={() => {
+                          if (confirm('هل أنت متأكد من رغبتك في حذف هذه الباقة؟')) {
+                            deletePkg(pkg.id);
+                          }
+                        }}
+                      >
+                        <Trash className="h-4 w-4 ml-1" /> حذف
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                
+                <div className="pt-2 border-t border-[hsl(var(--border))] border-dashed flex items-end justify-between">
+                  <span className="text-xs text-[hsl(var(--muted-foreground))] mb-1 font-medium">سعر الاشتراك</span>
+                  <div className="flex items-baseline gap-1">
+                     <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">
+                       {formatCurrency(pkg.price)}
+                     </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
