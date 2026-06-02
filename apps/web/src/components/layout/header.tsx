@@ -25,6 +25,7 @@ const navItems = [
   { label: 'الرئيسية', icon: LayoutDashboard, href: '/' },
   { label: 'الأعضاء', icon: Users, href: '/members' },
   { label: 'الاشتراكات', icon: CalendarCheck, href: '/subscriptions' },
+  { label: 'الباقات', icon: CalendarCheck, href: '/packages' },
   { label: 'المالية', icon: CreditCard, href: '/payments' },
   { label: 'المصروفات', icon: Wallet, href: '/expenses' },
   { label: 'الإعدادات', icon: Settings, href: '/settings' },
