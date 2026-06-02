@@ -11,6 +11,7 @@ import { Subscriptions } from './pages/Subscriptions';
 import { Payments } from './pages/Payments';
 import { Expenses } from './pages/Expenses';
 import { Settings } from './pages/Settings';
+import { Packages } from './pages/Packages';
 import { Expired } from './pages/Expired';
 import { AdminLayout } from './components/layout/admin-layout';
 import { AdminOverview } from './pages/admin/AdminOverview';
@@ -127,6 +128,9 @@ export function App() {
       </Route>
       <Route path="/subscriptions">
         <ProtectedPage component={Subscriptions} />
+      </Route>
+      <Route path="/packages">
+        <ProtectedPage component={Packages} />
       </Route>
       <Route path="/payments">
         <ProtectedPage component={Payments} />

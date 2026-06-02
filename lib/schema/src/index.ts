@@ -35,6 +35,7 @@ export interface Subscription {
   id: string;
   gym_id: string;
   member_id: string;
+  package_id?: string | null;
   plan_name: string;
   price: number;
   start_date: string;

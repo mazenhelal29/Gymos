@@ -70,6 +70,19 @@ export function useCreateSubscription() {
         .select()
         .single();
       if (error) throw error;
+
+      if (sub.payment_status === 'paid') {
+        const { error: paymentError } = await supabase
+          .from('payments')
+          .insert({
+            gym_id: gymId,
+            member_id: sub.member_id,
+            amount: sub.price,
+            payment_method: 'cash'
+          });
+        if (paymentError) console.error('Failed to auto-create payment', paymentError);
+      }
+
       return data;
     },
     onSuccess: () => {
